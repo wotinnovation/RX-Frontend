@@ -12,6 +12,7 @@ interface NewAuditFormProps {
   initialData?: {
     date?: string;
     hour?: string;
+    staffName?: string;
   };
 }
 
@@ -53,6 +54,7 @@ export function NewAuditForm({ onClose, initialData, isModal = true }: NewAuditF
       status: "scheduled",
       hospitalName: hospital?.name,
       doctorName: doctor?.name,
+      staffName: initialData?.staffName || "Unassigned",
     });
     onClose();
   };

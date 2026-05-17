@@ -279,7 +279,7 @@ export default function ReportsPage() {
                 >
                   <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest mb-3 ml-2">Export Format</p>
                   <div className="space-y-1">
-                    <button onClick={() => { setShowDirectExport(false); handleGenerate(); }} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-rose-500/10 text-rose-500 transition-colors group">
+                    <button onClick={() => { setShowDirectExport(false); setTimeout(() => window.print(), 300); }} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-rose-500/10 text-rose-500 transition-colors group">
                       <div className="flex items-center gap-3"><FilePdf size={16} /><span className="text-xs font-black">Audit PDF</span></div>
                       <Download size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
@@ -480,9 +480,20 @@ export default function ReportsPage() {
                             >
                               <div className="p-8 space-y-10">
                                 {/* Summary Narrative */}
-                                <div className="space-y-2">
-                                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
-                                    <FileText size={14} /> Executive Summary
+                                <div className="space-y-4">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
+                                      <FileText size={14} /> Executive Summary
+                                    </div>
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        window.print();
+                                      }}
+                                      className="px-4 py-2 bg-rose-500/10 text-rose-600 border border-rose-500/20 rounded-xl flex items-center gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/20 transition-all shadow-sm"
+                                    >
+                                      <FilePdf size={14} /> Detailed PDF
+                                    </button>
                                   </div>
                                   <p className="text-sm font-medium text-muted-foreground italic leading-relaxed">
                                     "{row.deepDetail.summary}"
@@ -707,7 +718,18 @@ export default function ReportsPage() {
                   ].map((format) => (
                     <button 
                       key={format.label}
-                      onClick={() => setShowExportModal(false)} 
+                      onClick={() => {
+                        setShowExportModal(false);
+                        if (format.label === "Audit PDF") {
+                          setTimeout(() => window.print(), 300);
+                        } else {
+                          // Mock download for other formats
+                          const a = document.createElement("a");
+                          a.href = "data:text/plain;charset=utf-8,Mock%20Export%20Data";
+                          a.download = `Intelligence_Center_Export_${format.label.replace(' ', '_')}.txt`;
+                          a.click();
+                        }
+                      }} 
                       className="group p-8 bg-secondary/20 border border-border rounded-[2.5rem] hover:border-primary transition-all flex flex-col items-center gap-4 hover:shadow-2xl hover:shadow-primary/5 active:scale-95"
                     >
                       <div className={cn("p-4 rounded-2xl group-hover:scale-110 transition-transform shadow-sm", format.bg, format.color)}>

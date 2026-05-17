@@ -70,7 +70,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
   const [loggingAppointment, setLoggingAppointment] = useState<Appointment | null>(null);
   
   const [filterRange, setFilterRange] = useState<"today" | "week" | "month">("week");
-  const [viewType, setViewType] = useState<"table" | "calendar">("table");
+  const [viewType, setViewType] = useState<"table" | "calendar">("calendar");
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showAllActivity, setShowAllActivity] = useState(false);
@@ -135,20 +135,20 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
 
   
   const filteredMeetings = useMemo(() => {
-    const now = new Date();
-    const todayStr = now.toISOString().split("T")[0];
+    const referenceDate = new Date(currentDate);
+    const todayStr = referenceDate.toISOString().split("T")[0];
     
     // Helper for week range
     const getWeekRange = () => {
-      const start = new Date(now);
-      start.setDate(now.getDate() - now.getDay());
+      const start = new Date(referenceDate);
+      start.setDate(referenceDate.getDate() - referenceDate.getDay());
       const end = new Date(start);
       end.setDate(start.getDate() + 6);
       return { start: start.toISOString().split("T")[0], end: end.toISOString().split("T")[0] };
     };
 
     const week = getWeekRange();
-    const monthStr = now.toISOString().slice(0, 7); // YYYY-MM
+    const monthStr = referenceDate.toISOString().slice(0, 7); // YYYY-MM
 
     return appointments.filter(m => {
       if (m.staffName !== rep.name) return false;
@@ -159,7 +159,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
       
       return true;
     });
-  }, [filterRange, rep.name, appointments]);
+  }, [filterRange, rep.name, appointments, currentDate]);
 
   const startOfWeek = useMemo(() => {
     const d = new Date(currentDate);
@@ -181,9 +181,9 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
       return [startOfWeek];
     }
     // All weeks in the current month
-    const now = new Date();
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const referenceDate = new Date(currentDate);
+    const firstDay = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1);
+    const lastDay = new Date(referenceDate.getFullYear(), referenceDate.getMonth() + 1, 0);
     // Find Sunday at or before firstDay
     const weekStart = new Date(firstDay);
     weekStart.setDate(firstDay.getDate() - firstDay.getDay());
@@ -195,7 +195,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
       cursor.setDate(cursor.getDate() + 7);
     }
     return weeks;
-  }, [filterRange, startOfWeek]);
+  }, [filterRange, startOfWeek, currentDate]);
 
   const shiftWeek = (weeks: number) => {
     const nextDate = new Date(currentDate);
@@ -447,8 +447,12 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
                           const dayDate = new Date(weekStart);
                           dayDate.setDate(weekStart.getDate() + dayIdx);
                           const dayDateStr = dayDate.toISOString().split('T')[0];
-                          const hourPrefix = hour.split(':')[0];
-                          const hourApps = filteredMeetings.filter(a => a.date === dayDateStr && a.hour.startsWith(hourPrefix));
+                          const hourPrefix = parseInt(hour.split(':')[0], 10);
+                          const hourApps = filteredMeetings.filter(a => {
+                            if (a.date !== dayDateStr) return false;
+                            const appHour = parseInt(a.hour.split(':')[0], 10);
+                            return appHour === hourPrefix;
+                          });
                           return (
                             <div key={dayIdx} className="p-1 border-r last:border-0 border-border relative hover:bg-secondary/5 group transition-all min-h-[100px]">
                               <div className="flex flex-col gap-1 h-full pb-6">
@@ -469,7 +473,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
                                 {hourApps.length === 0 && (
                                   <div 
                                     onClick={() => {
-                                      setAddPreFill({ date: dayDateStr, hour: hour });
+                                      setAddPreFill({ date: dayDateStr, hour: hour, staffName: rep.name });
                                       setIsAddModalOpen(true);
                                     }}
                                     className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
@@ -484,7 +488,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
                               {hourApps.length > 0 && (
                                 <button 
                                   onClick={() => {
-                                    setAddPreFill({ date: dayDateStr, hour: hour });
+                                    setAddPreFill({ date: dayDateStr, hour: hour, staffName: rep.name });
                                     setIsAddModalOpen(true);
                                   }}
                                   className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:scale-110 active:scale-95 z-10"

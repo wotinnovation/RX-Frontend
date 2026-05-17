@@ -14,7 +14,8 @@ import {
   ShoppingCart,
   FileText,
   Upload,
-  CheckCircle2
+  CheckCircle2,
+  Search
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Appointment, useData } from "@/lib/context/data-context";
@@ -23,6 +24,102 @@ import { cn } from "@/lib/utils";
 interface VisitCompletionFormProps {
   meeting: Appointment;
   onClose: () => void;
+}
+
+function SearchableSelect({ 
+  items, 
+  onSelect, 
+  placeholder,
+  theme = "default"
+}: { 
+  items: any[], 
+  onSelect: (id: string) => void,
+  placeholder: string,
+  theme?: "default" | "blue" | "emerald"
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filtered = items.filter(m => m.name.toLowerCase().includes(search.toLowerCase()));
+
+  const themeClasses = {
+    default: "bg-secondary/50 border-border text-foreground hover:bg-secondary",
+    blue: "bg-blue-500/10 border-blue-500/20 text-blue-700 hover:bg-blue-500/20",
+    emerald: "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 hover:bg-emerald-500/20"
+  };
+  
+  const hoverClasses = {
+    default: "hover:bg-secondary/50",
+    blue: "hover:bg-blue-500/10 hover:text-blue-700",
+    emerald: "hover:bg-emerald-500/10 hover:text-emerald-700"
+  };
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <button 
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "border rounded-lg px-3 py-1.5 text-[10px] font-bold outline-none cursor-pointer transition-colors flex items-center justify-between min-w-[160px]",
+          themeClasses[theme]
+        )}
+      >
+        <span className="truncate">{placeholder}</span>
+        <Plus size={12} className="ml-2 flex-shrink-0" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-1 w-[220px] bg-white dark:bg-slate-900 border border-border rounded-lg shadow-xl z-50 overflow-hidden flex flex-col">
+          <div className="p-2 border-b border-border/50 flex items-center gap-2">
+            <Search size={12} className="text-muted-foreground flex-shrink-0" />
+            <input 
+              type="text"
+              autoFocus
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="w-full bg-transparent border-none outline-none text-[10px] font-medium"
+            />
+          </div>
+          <div className="max-h-[200px] overflow-y-auto custom-scrollbar p-1">
+            {filtered.length === 0 ? (
+              <div className="p-3 text-center text-[10px] text-muted-foreground font-medium">No results found</div>
+            ) : (
+              filtered.map(m => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    onSelect(m.id);
+                    setIsOpen(false);
+                    setSearch("");
+                  }}
+                  className={cn(
+                    "w-full text-left px-3 py-2 text-[10px] font-bold rounded-md transition-colors flex justify-between items-center gap-2",
+                    hoverClasses[theme]
+                  )}
+                >
+                  <span className="truncate">{m.name}</span>
+                  {m.price && <span className="text-[9px] text-muted-foreground opacity-70 whitespace-nowrap">AED {m.price}</span>}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormProps) {
@@ -218,19 +315,15 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
               <section className="space-y-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-black uppercase text-muted-foreground ml-1">Free Samples</span>
-                  <select 
-                    onChange={(e) => {
-                      if (e.target.value) {
-                        const newSamples = [...(reportData.freeSamples || []), { medicineId: e.target.value, qty: 1, approved: false }];
-                        setReportData({ ...reportData, freeSamples: newSamples });
-                        e.target.value = ""; 
-                      }
+                  <SearchableSelect 
+                    items={medicines}
+                    placeholder="Quick Add Sample..."
+                    theme="default"
+                    onSelect={(medicineId) => {
+                      const newSamples = [...(reportData.freeSamples || []), { medicineId, qty: 1, approved: false }];
+                      setReportData({ ...reportData, freeSamples: newSamples });
                     }}
-                    className="bg-secondary/50 border border-border rounded-lg px-3 py-1.5 text-[10px] font-bold outline-none cursor-pointer hover:bg-secondary transition-colors"
-                  >
-                    <option value="">Quick Add Sample...</option>
-                    {medicines.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                  </select>
+                  />
                 </div>
                 <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
                   {reportData.freeSamples?.map((sample, idx) => {
@@ -286,18 +379,14 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
                     <ShoppingCart size={16} />
                     <span className="text-[10px] font-black uppercase tracking-widest">Direct Sale Order</span>
                   </div>
-                  <select 
-                    onChange={(e) => {
-                      if (e.target.value) {
-                        addOrder(e.target.value);
-                        e.target.value = ""; 
-                      }
+                  <SearchableSelect 
+                    items={medicines}
+                    placeholder="Add Product..."
+                    theme="blue"
+                    onSelect={(medicineId) => {
+                      addOrder(medicineId);
                     }}
-                    className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-1.5 text-[10px] font-bold text-blue-700 outline-none cursor-pointer hover:bg-blue-500/20 transition-colors"
-                  >
-                    <option value="">Add Product...</option>
-                    {medicines.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                  </select>
+                  />
                 </div>
 
                 <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
