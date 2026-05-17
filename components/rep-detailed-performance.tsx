@@ -75,7 +75,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showAllActivity, setShowAllActivity] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [addPreFill, setAddPreFill] = useState<{ date?: string, hour?: string } | null>(null);
+  const [addPreFill, setAddPreFill] = useState<{ date?: string, hour?: string, staffName?: string } | null>(null);
   
   const myHospitals = hospitals.filter(h => h.assignedRepId === rep.id);
   const mySales = getRepSales(rep.id);
