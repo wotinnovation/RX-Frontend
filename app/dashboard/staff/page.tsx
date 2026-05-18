@@ -3,8 +3,9 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
+import { DashboardOverview } from "@/components/dashboard-overview";
 
-export default function DashboardPage() {
+export default function StaffDashboardPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
@@ -14,15 +15,17 @@ export default function DashboardPage() {
         router.push("/login");
       } else if (user.role === "Manager") {
         router.push("/dashboard/manager");
-      } else {
-        router.push("/dashboard/staff");
       }
     }
   }, [user, isLoading, router]);
 
-  return (
-    <div className="h-screen w-full flex items-center justify-center bg-background">
-      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (isLoading || !user || user.role === "Manager") {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-background">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return <DashboardOverview />;
 }

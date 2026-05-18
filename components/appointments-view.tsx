@@ -30,6 +30,10 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   completed: { label: "Completed", icon: CheckCircle2, color: "bg-emerald-500", pill: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" },
   upcoming: { label: "Upcoming", icon: CalendarIcon, color: "bg-indigo-500", pill: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20" },
   visited: { label: "Visited", icon: Activity, color: "bg-amber-500", pill: "bg-amber-500/10 text-amber-500 border-amber-500/20" },
+  pending_approval: { label: "Pending Approval", icon: Clock, color: "bg-purple-500", pill: "bg-purple-500/10 text-purple-500 border-purple-500/20" },
+  pending_reschedule: { label: "Pending Reschedule", icon: Clock, color: "bg-orange-500", pill: "bg-orange-500/10 text-orange-500 border-orange-500/20" },
+  pending_cancellation: { label: "Pending Cancel", icon: X, color: "bg-rose-500", pill: "bg-rose-500/10 text-rose-500 border-rose-500/20" },
+  cancelled: { label: "Cancelled", icon: X, color: "bg-rose-600", pill: "bg-rose-600/10 text-rose-600 border-rose-600/20" },
 };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -42,6 +46,8 @@ const STATUS_COLORS: Record<string, string> = {
   pending_approval: "bg-purple-600 text-white border-purple-500",
   cancelled: "bg-rose-600 text-white border-rose-500",
   upcoming: "bg-indigo-600 text-white border-indigo-500",
+  pending_reschedule: "bg-orange-600 text-white border-orange-500",
+  pending_cancellation: "bg-red-600 text-white border-red-500",
 };
 
 interface AppointmentsViewProps {
@@ -178,8 +184,10 @@ export function AppointmentsView({ title, subtitle, data, role }: AppointmentsVi
                   className={cn("px-4 py-2 rounded-md text-[9px] font-black uppercase transition-all", listPeriod === "all" ? "bg-white shadow-sm text-primary" : "text-muted-foreground")}
                 >All</button>
               </div>
-              {["all", "scheduled", "upcoming", "completed", "visited"].map((s) => (
-                <button key={s} onClick={() => setStatusFilter(s)} className={cn("px-6 py-3 rounded-[10px] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border", statusFilter === s ? "bg-primary text-white border-primary" : "bg-card border-border text-muted-foreground")}>{s}</button>
+              {["all", "scheduled", "upcoming", "completed", "visited", "pending_reschedule", "pending_cancellation"].map((s) => (
+                <button key={s} onClick={() => setStatusFilter(s)} className={cn("px-6 py-3 rounded-[10px] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border", statusFilter === s ? "bg-primary text-white border-primary" : "bg-card border-border text-muted-foreground")}>
+                  {s.replace("_", " ")}
+                </button>
               ))}
             </div>
           </motion.div>

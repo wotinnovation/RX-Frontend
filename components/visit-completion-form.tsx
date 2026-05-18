@@ -132,8 +132,14 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
     freeSamples: meeting.freeSamples || [],
     orders: meeting.orders || [],
     closingComments: meeting.closingComments || "",
-    status: "pending_approval"
+    status: "completed"
   });
+
+  const [outcomeStatus, setOutcomeStatus] = useState<string>("completed");
+  const [proposedDate, setProposedDate] = useState<string>(meeting.date);
+  const [proposedHour, setProposedHour] = useState<string>(meeting.hour);
+  const [rescheduleReason, setRescheduleReason] = useState<string>("");
+  const [cancelReason, setCancelReason] = useState<string>("");
 
   React.useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -144,7 +150,23 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
   }, [onClose]);
 
   const handleSaveReport = () => {
-    updateAppointment(meeting.id, { ...reportData, status: "pending_approval" });
+    const finalData: Partial<Appointment> = {
+      ...reportData,
+      status: outcomeStatus as any,
+    };
+    if (outcomeStatus === "pending_reschedule") {
+      finalData.proposedDate = proposedDate;
+      finalData.proposedHour = proposedHour;
+      finalData.rescheduleReason = rescheduleReason;
+    } else if (outcomeStatus === "pending_cancellation") {
+      finalData.cancelReason = cancelReason;
+    } else if (outcomeStatus === "completed") {
+      // Auto-approve samples for completed visits since VISIT NO NEED TO APPROVAL FROM MANAGER
+      if (finalData.freeSamples) {
+        finalData.freeSamples = finalData.freeSamples.map(s => ({ ...s, approved: true }));
+      }
+    }
+    updateAppointment(meeting.id, finalData);
     onClose();
   };
 
@@ -192,56 +214,78 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 pointer-events-none">
+    <div className="fixed inset-0 z-[100] flex items-stretch justify-end pointer-events-none">
       <motion.div 
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
         onClick={onClose} 
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm pointer-events-auto" 
+        className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm pointer-events-auto cursor-pointer" 
       />
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }} 
-        animate={{ opacity: 1, scale: 1, y: 0 }} 
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative bg-card w-full max-w-5xl max-h-[90vh] rounded-[10px] shadow-2xl border border-border pointer-events-auto flex flex-col overflow-hidden"
+        initial={{ x: "100%", opacity: 0 }} 
+        animate={{ x: 0, opacity: 1 }} 
+        exit={{ x: "100%", opacity: 0 }}
+        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+        className="relative bg-card border-l border-border w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col h-full pointer-events-auto rounded-l-[2.5rem] rounded-r-none"
       >
         {/* Simple Header */}
-        <div className="p-8 border-b border-border relative bg-secondary/10">
+        <div className="p-4 border-b border-border relative bg-secondary/10">
           <button 
             type="button"
             onClick={onClose} 
-            className="absolute top-8 right-8 w-8 h-8 bg-secondary rounded-full flex items-center justify-center hover:bg-secondary/80 transition-colors"
+            className="absolute top-4 right-4 w-7 h-7 bg-secondary rounded-full flex items-center justify-center hover:bg-secondary/80 transition-colors"
           >
-            <X size={16} />
+            <X size={14} />
           </button>
           
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-1">Log Visit Outcome</p>
-              <h2 className="text-2xl font-black tracking-tight">{meeting.title}</h2>
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary mb-0.5">Log Visit Outcome</p>
+              <h2 className="text-lg font-black tracking-tight">{meeting.title}</h2>
               <div className="flex items-center gap-4 mt-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                 <span className="flex items-center gap-1.5"><Building2 size={12} /> {meeting.entityName}</span>
                 <span className="flex items-center gap-1.5"><Clock size={12} /> {meeting.hour}</span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 min-w-[240px]">
-              <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Accompanied With</label>
-              <select 
-                className="w-full px-4 py-2.5 bg-card border border-border rounded-lg text-[11px] font-bold outline-none focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
-                defaultValue=""
-              >
-                <option value="">No Accompaniment</option>
-                <optgroup label="Field Staff">
-                  {reps.filter(r => r.role.toLowerCase() !== "manager").map(r => (
-                    <option key={r.id} value={r.id}>{r.name} ({r.role})</option>
-                  ))}
-                </optgroup>
-                <optgroup label="Management">
-                  {reps.filter(r => r.role.toLowerCase() === "manager").map(r => (
-                    <option key={r.id} value={r.id}>{r.name} (Sales Manager)</option>
-                  ))}
-                </optgroup>
-              </select>
+             <div className="flex flex-col md:flex-row gap-3 min-w-[400px]">
+              <div className="flex-1 flex flex-col gap-1.5">
+                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Accompanied With</label>
+                <select 
+                  className="w-full px-4 py-2 bg-card border border-border rounded-lg text-[11px] font-bold outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                  defaultValue=""
+                >
+                  <option value="">No Accompaniment</option>
+                  <optgroup label="Field Staff">
+                    {reps.filter(r => r.role.toLowerCase() !== "manager").map(r => (
+                      <option key={r.id} value={r.id}>{r.name} ({r.role})</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Management">
+                    {reps.filter(r => r.role.toLowerCase() === "manager").map(r => (
+                      <option key={r.id} value={r.id}>{r.name} (Sales Manager)</option>
+                    ))}
+                  </optgroup>
+                </select>
+              </div>
+
+              <div className="flex-1 flex flex-col gap-1.5">
+                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Outcome Status</label>
+                <select 
+                  id="outcome-status-select"
+                  value={outcomeStatus}
+                  onChange={(e) => setOutcomeStatus(e.target.value)}
+                  className={cn(
+                    "w-full px-4 py-2 border rounded-lg text-[11px] font-black outline-none cursor-pointer transition-all",
+                    outcomeStatus === "completed" ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 focus:ring-emerald-500" :
+                    outcomeStatus === "pending_reschedule" ? "bg-orange-500/10 border-orange-500/30 text-orange-600 focus:ring-orange-500" :
+                    "bg-rose-500/10 border-rose-500/30 text-rose-600 focus:ring-rose-500"
+                  )}
+                >
+                  <option value="completed">Completed / Visited</option>
+                  <option value="pending_reschedule">Request Reschedule</option>
+                  <option value="pending_cancellation">Request Cancel</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -257,6 +301,63 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
                 </div>
                 <h3 className="text-sm font-black uppercase tracking-widest">Detailing & Feedback</h3>
               </div>
+
+              {outcomeStatus === "pending_reschedule" && (
+                <div className="p-6 bg-orange-500/5 border border-orange-500/20 rounded-[10px] space-y-4">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-orange-600 font-bold">Rescheduling Request Details</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Proposed Date</label>
+                      <input 
+                        id="form-reschedule-date"
+                        type="date" 
+                        value={proposedDate}
+                        onChange={(e) => setProposedDate(e.target.value)}
+                        className="w-full p-2 bg-white dark:bg-slate-900 border border-border rounded-lg text-xs font-black"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Proposed Hour</label>
+                      <select 
+                        id="form-reschedule-hour"
+                        value={proposedHour}
+                        onChange={(e) => setProposedHour(e.target.value)}
+                        className="w-full p-2 bg-white dark:bg-slate-900 border border-border rounded-lg text-xs font-black"
+                      >
+                        {["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map(h => (
+                          <option key={h} value={h}>{h}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Reason for Rescheduling</label>
+                    <textarea 
+                      id="form-reschedule-reason"
+                      placeholder="Why does this visit need to be rescheduled?"
+                      value={rescheduleReason}
+                      onChange={(e) => setRescheduleReason(e.target.value)}
+                      className="w-full p-3 bg-white dark:bg-slate-900 border border-border rounded-lg text-xs font-semibold min-h-[60px] resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {outcomeStatus === "pending_cancellation" && (
+                <div className="p-6 bg-rose-500/5 border border-rose-500/20 rounded-[10px] space-y-4">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-rose-600 font-bold">Cancellation Request Details</p>
+                  <div>
+                    <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Reason for Cancellation</label>
+                    <textarea 
+                      id="form-cancel-reason"
+                      placeholder="Why does this visit need to be cancelled?"
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      className="w-full p-3 bg-white dark:bg-slate-900 border border-border rounded-lg text-xs font-semibold min-h-[80px] resize-none"
+                    />
+                  </div>
+                </div>
+              )}
 
               <section className="space-y-4">
                 <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Opening Remarks</label>
@@ -455,17 +556,26 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
         {/* Action Footer */}
         <div className="p-8 border-t border-border bg-secondary/10 flex items-center justify-end gap-4">
           <div className="flex items-center gap-3 mr-auto">
-            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-600">Awaiting Managerial Audit</span>
+            <div className={cn(
+              "w-2 h-2 rounded-full animate-pulse",
+              outcomeStatus === "completed" ? "bg-emerald-500" : "bg-amber-500"
+            )} />
+            <span className={cn(
+              "text-[10px] font-black uppercase tracking-[0.2em]",
+              outcomeStatus === "completed" ? "text-emerald-600" : "text-amber-600"
+            )}>
+              {outcomeStatus === "completed" ? "Directly Logged (No Manager Approval Required)" : "Awaiting Managerial Audit"}
+            </span>
           </div>
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className="px-6 py-3 text-muted-foreground font-black text-[10px] uppercase hover:bg-secondary rounded-[10px] transition-colors">Discard</button>
             <button 
+              id="finalize-visit-btn"
               type="button"
               onClick={handleSaveReport} 
               className="px-10 py-3 bg-primary text-primary-foreground font-black text-[10px] uppercase rounded-[10px] shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all"
             >
-              Finalize Visit
+              {outcomeStatus === "completed" ? "Finalize Visit" : "Submit Request"}
             </button>
           </div>
         </div>

@@ -60,17 +60,17 @@ export function NewAuditForm({ onClose, initialData, isModal = true }: NewAuditF
   };
 
   const content = (
-    <div className={cn("relative bg-card border border-border w-full max-w-xl rounded-[10px] shadow-2xl overflow-hidden flex flex-col h-[72vh] max-h-[90vh] pointer-events-auto", !isModal && "max-w-none border-0 shadow-none rounded-none h-full")}>
+    <div className={cn("relative bg-card w-full flex flex-col h-full overflow-hidden pointer-events-auto", !isModal && "max-w-none border-0 shadow-none rounded-none")}>
       {isModal && (
-        <div className="p-8 bg-primary text-primary-foreground relative shrink-0">
+        <div className="p-5 bg-primary text-primary-foreground relative shrink-0">
           <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.1)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.1)_75%,transparent_75%,transparent)] bg-[length:20px_20px] opacity-10" />
-          <button type="button" onClick={onClose} className="absolute top-8 right-8 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-all z-50 pointer-events-auto"><X size={20} /></button>
+          <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-all z-50 pointer-events-auto"><X size={16} /></button>
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap size={14} className="fill-current" />
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-70">Logistics Deployment</p>
+            <div className="flex items-center gap-2 mb-1">
+              <Zap size={12} className="fill-current" />
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] opacity-70">Logistics Deployment</p>
             </div>
-            <h3 className="text-3xl font-black tracking-tighter">Schedule Field Visit</h3>
+            <h3 className="text-xl font-black tracking-tighter">Schedule Field Visit</h3>
           </div>
         </div>
       )}
@@ -153,9 +153,17 @@ export function NewAuditForm({ onClose, initialData, isModal = true }: NewAuditF
   if (!isModal) return content;
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-      {content}
+    <div className="fixed inset-0 z-[110] flex items-stretch justify-end">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-md cursor-pointer pointer-events-auto" />
+      <motion.div
+        initial={{ x: "100%", opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: "100%", opacity: 0 }}
+        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+        className="relative bg-card border-l border-border w-full max-w-xl flex flex-col h-full rounded-l-[2rem] rounded-r-none shadow-2xl overflow-hidden pointer-events-auto"
+      >
+        {content}
+      </motion.div>
     </div>
   );
 }

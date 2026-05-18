@@ -21,7 +21,8 @@ import {
   UserPlus,
   Hospital,
   Receipt,
-  FileText
+  FileText,
+  MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/context/auth-context";
@@ -37,7 +38,7 @@ export function Sidebar() {
   const isManager = user?.role === "Manager";
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+    { icon: LayoutDashboard, label: "Dashboard", href: isManager ? "/dashboard/manager" : "/dashboard/staff" },
     ...(isManager ? [
       { icon: ClipboardList, label: "Appointments", href: "/dashboard/manager-appointments" },
       { icon: Users, label: "Team Performance", href: "/dashboard/team" },
@@ -51,6 +52,7 @@ export function Sidebar() {
     { icon: BarChart3, label: "Sales View", href: "/dashboard/sales" },
     { icon: Pill, label: "Clinical Samples", href: "/dashboard/free-medicine" },
     { icon: Gift, label: "Gifts & Meetups", href: "/dashboard/gifts-meetups" },
+    { icon: MessageSquare, label: "Team Chat", href: "/dashboard/chat" },
   ];
 
   return (

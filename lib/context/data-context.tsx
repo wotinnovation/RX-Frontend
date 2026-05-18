@@ -103,7 +103,7 @@ export interface Appointment {
   duration: string;
   description: string;
   contactPerson: string;
-  status: "scheduled" | "completed" | "cancelled" | "visited" | "closed" | "upcoming" | "pending_approval";
+  status: "scheduled" | "completed" | "cancelled" | "visited" | "closed" | "upcoming" | "pending_approval" | "pending_reschedule" | "pending_cancellation";
   hospitalName?: string;
   doctorName?: string;
   patientName?: string;
@@ -117,6 +117,10 @@ export interface Appointment {
   openingComments?: string;
   closingComments?: string;
   managerComment?: string;
+  proposedDate?: string;
+  proposedHour?: string;
+  rescheduleReason?: string;
+  cancelReason?: string;
 }
 
 export interface GiftMeetup {
