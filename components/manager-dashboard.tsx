@@ -194,9 +194,9 @@ export function ManagerDashboard() {
 
       {/* Unified Action Center (All Approvals) */}
       <div className="bg-card border border-border rounded-[10px] card-shadow overflow-hidden mb-10">
-        <div className="p-6 border-b border-border flex items-center justify-between bg-rose-500/5">
+        <div className="p-6 border-b border-border flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-rose-500 rounded-[10px] flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+            <div className="w-12 h-12 bg-primary rounded-[10px] flex items-center justify-center text-white shadow-lg shadow-primary/20">
               <ShieldCheck size={28} />
             </div>
             <div>
