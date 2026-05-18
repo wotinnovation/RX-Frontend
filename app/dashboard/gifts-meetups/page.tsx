@@ -16,7 +16,8 @@ import {
   DollarSign,
   TrendingUp,
   Award,
-  MoreHorizontal
+  MoreHorizontal,
+  XCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GiftDetailModal } from "@/components/gift-detail-modal";
@@ -365,11 +366,8 @@ export default function GiftsMeetupsPage() {
                         initial={{ opacity: 0, x: -10 }} 
                         animate={{ opacity: 1, x: 0 }} 
                         transition={{ delay: i * 0.05 }} 
-                        onClick={() => isManager ? setSelectedGift(item) : null}
-                        className={cn(
-                            "group transition-all",
-                            isManager && "hover:bg-secondary/30 cursor-pointer"
-                        )}
+                        onClick={() => setSelectedGift(item)}
+                        className="group transition-all hover:bg-secondary/30 cursor-pointer"
                       >
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-4">
@@ -412,17 +410,20 @@ export default function GiftsMeetupsPage() {
                         <td className="px-8 py-6 text-center">
                           {isManager && item.status === "pending_approval" ? (
                             <button 
-                              onClick={(e) => { e.stopPropagation(); handleApprove(item.id); }}
-                              className="px-4 py-2 bg-emerald-500 text-white rounded-[10px] text-[9px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all"
+                              onClick={(e) => { e.stopPropagation(); setSelectedGift(item); }}
+                              className="px-4 py-2 bg-primary text-white rounded-[10px] text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all"
                             >
-                              Approve Now
+                              Audit Request
                             </button>
                           ) : (
                             <span className={cn(
                               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase",
-                              item.status === 'approved' ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
+                              item.status === 'approved' ? "bg-emerald-500/10 text-emerald-600" : 
+                              (item.status === 'rejected' ? "bg-rose-500/10 text-rose-600" : "bg-amber-500/10 text-amber-600")
                             )}>
-                              {item.status === 'approved' ? <Check size={12} /> : <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />}
+                              {item.status === 'approved' ? <Check size={12} /> : 
+                               (item.status === 'rejected' ? <XCircle size={12} className="text-rose-600" /> : 
+                                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />)}
                               {item.status.replace('_', ' ')}
                             </span>
                           )}
@@ -439,6 +440,17 @@ export default function GiftsMeetupsPage() {
               </div>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedGift && (
+          <GiftDetailModal 
+            item={selectedGift}
+            onClose={() => setSelectedGift(null)}
+            onApprove={(id, comment) => updateGiftMeetupStatus(id, "approved", comment)}
+            onReject={(id, comment) => updateGiftMeetupStatus(id, "rejected", comment)}
+          />
         )}
       </AnimatePresence>
     </div>

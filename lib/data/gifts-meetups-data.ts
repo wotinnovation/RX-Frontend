@@ -8,7 +8,8 @@ export interface GiftMeetup {
   quantity: number;
   cost?: number;
   date: string;
-  status: "completed" | "pending_approval" | "approved";
+  status: "completed" | "pending_approval" | "approved" | "rejected";
+  managerComment?: string;
 }
 
 export const GIFTS_MEETUPS_DATA: GiftMeetup[] = [

@@ -129,6 +129,15 @@ export function GiftDetailModal({ item, onClose, onApprove, onReject }: GiftDeta
             </div>
           )}
 
+          {item.managerComment && (
+            <div className="p-6 bg-secondary/20 rounded-[10px] border border-border">
+              <p className="text-[10px] font-black uppercase tracking-widest mb-3 text-primary">Compliance Audit Logs</p>
+              <div className="bg-white dark:bg-slate-900 p-4 rounded-lg border border-border text-xs leading-relaxed font-mono">
+                {item.managerComment}
+              </div>
+            </div>
+          )}
+
           {item.status === 'pending_approval' && (
             <div className="p-6 bg-secondary/30 rounded-[10px] border border-border space-y-4">
               <div className="flex items-center justify-between">
