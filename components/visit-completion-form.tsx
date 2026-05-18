@@ -287,7 +287,7 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
                   placeholder="Define custom compound details..."
                   value={reportData.customCompound}
                   onChange={(e) => setReportData({...reportData, customCompound: e.target.value})}
-                  className="w-full p-4 bg-white dark:bg-slate-900 border border-purple-500/20 rounded-[10px] focus:outline-none text-sm min-h-[80px] resize-none font-medium"
+                  className="w-full p-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-purple-500/20 rounded-[10px] focus:outline-none text-sm min-h-[80px] resize-none font-medium"
                 />
               </section>
 
@@ -356,7 +356,7 @@ export function VisitCompletionForm({ meeting, onClose }: VisitCompletionFormPro
                             type="number" 
                             value={sample.qty}
                             onChange={(e) => updateFreeSample(idx, "qty", parseInt(e.target.value) || 1)}
-                            className="w-10 bg-white border border-border rounded-lg text-center font-black text-[10px] py-1.5"
+                            className="w-10 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-border rounded-lg text-center font-black text-[10px] py-1.5"
                           />
                           <button onClick={() => removeFreeSample(idx)} className="text-rose-500 hover:text-rose-600 transition-colors p-1">
                             <X size={14} />
