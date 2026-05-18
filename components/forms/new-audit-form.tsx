@@ -60,7 +60,7 @@ export function NewAuditForm({ onClose, initialData, isModal = true }: NewAuditF
   };
 
   const content = (
-    <div className={cn("relative bg-card border border-border w-full max-w-xl rounded-[10px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] pointer-events-auto", !isModal && "max-w-none border-0 shadow-none rounded-none h-full")}>
+    <div className={cn("relative bg-card border border-border w-full max-w-xl rounded-[10px] shadow-2xl overflow-hidden flex flex-col h-[72vh] max-h-[90vh] pointer-events-auto", !isModal && "max-w-none border-0 shadow-none rounded-none h-full")}>
       {isModal && (
         <div className="p-8 bg-primary text-primary-foreground relative shrink-0">
           <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.1)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.1)_75%,transparent_75%,transparent)] bg-[length:20px_20px] opacity-10" />

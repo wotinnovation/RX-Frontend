@@ -39,30 +39,30 @@ export function UnifiedAddForm({ onClose, initialTab = "clinic" }: UnifiedAddFor
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        exit={{ opacity: 0 }} 
-        onClick={onClose} 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md" 
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-black/60 backdrop-blur-md"
       />
-      
-      <motion.div 
-        initial={{ scale: 0.95, opacity: 0, y: 20 }} 
-        animate={{ scale: 1, opacity: 1, y: 0 }} 
-        exit={{ scale: 0.95, opacity: 0, y: 20 }} 
-        className="relative bg-card border border-border w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] pointer-events-auto"
+
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="relative bg-card border border-border w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col h-[72vh] max-h-[90vh] pointer-events-auto"
       >
         {/* Header Tabs */}
-        <div className="bg-secondary/30 p-2 flex border-b border-border">
+        <div className="bg-secondary/30 p-4 md:p-5 flex border-b border-border items-center">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
-                "flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all",
-                activeTab === tab.id 
-                  ? `${tab.color} text-white shadow-lg` 
+                "flex-1 flex items-center justify-center gap-3 py-5 rounded-[1.25rem] text-[11px] font-black uppercase tracking-widest transition-all",
+                activeTab === tab.id
+                  ? `${tab.color} text-white shadow-lg`
                   : "text-muted-foreground hover:bg-secondary/50"
               )}
             >
@@ -70,9 +70,9 @@ export function UnifiedAddForm({ onClose, initialTab = "clinic" }: UnifiedAddFor
               {tab.label}
             </button>
           ))}
-          <button 
+          <button
             onClick={onClose}
-            className="ml-2 w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-rose-500 hover:text-white transition-all text-muted-foreground"
+            className="ml-4 w-14 h-14 flex items-center justify-center rounded-[1.25rem] hover:bg-rose-500 hover:text-white transition-all text-muted-foreground border border-border bg-card shadow-sm"
           >
             <X size={20} />
           </button>

@@ -32,7 +32,7 @@ export function NewStaffForm({ onClose, isModal = true }: NewStaffFormProps) {
   };
 
   const content = (
-    <div className={cn("relative bg-card border border-border w-full max-w-2xl rounded-[10px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] pointer-events-auto", !isModal && "max-w-none border-0 shadow-none rounded-none h-full")}>
+    <div className={cn("relative bg-card border border-border w-full max-w-2xl rounded-[10px] shadow-2xl overflow-hidden flex flex-col h-[72vh] max-h-[90vh] pointer-events-auto", !isModal && "max-w-none border-0 shadow-none rounded-none h-full")}>
       {isModal && (
         <div className="p-8 bg-indigo-600 text-white relative shrink-0">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent)]" />
