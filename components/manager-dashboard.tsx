@@ -131,12 +131,12 @@ export function ManagerDashboard() {
         <div>
           <h2 className="text-sm font-bold uppercase tracking-wider opacity-60 min-[1400px]:block hidden">Team Management Dashboard</h2>
           <h1 className="text-4xl font-extrabold mt-1 tracking-tight">Field Operations Overview</h1>
-          <p className="opacity-60 mt-2">Monday, 04 May 2026 · {reps.length} active reps · UAE Territories</p>
+          <p className="opacity-60 mt-2">Monday, 04 May 2026 · 8 active reps · UAE Territories</p>
         </div>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <KPICard label="Active Reps" value={`${reps.length}/10`} sub="2 on leave" icon={Users} color="bg-blue-500" href="/dashboard/team" />
+        <KPICard label="Active Reps" value="8/10" sub="2 on leave" icon={Users} color="bg-blue-500" href="/dashboard/team" />
         <KPICard label="Visits Today" value="42 / 56" sub="75% Achievement" icon={MapPin} color="bg-emerald-500" href="/dashboard/manager-appointments" />
         <KPICard label="Action Required" value={unifiedPending.length.toString()} sub="Pending Approvals" icon={AlertTriangle} color="bg-red-500" href="/dashboard/approvals" />
         <KPICard label="Follow-ups" value="14" sub="5 overdue" icon={Clock} color="bg-amber-500" href="/dashboard/manager-appointments" />

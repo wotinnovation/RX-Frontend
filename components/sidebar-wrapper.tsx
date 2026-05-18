@@ -108,7 +108,7 @@ function GlobalTopBar({ sales, reps, appointments, medicines }: any) {
         <div className="flex items-center gap-10">
           <TopBarMetric label="Revenue Today" value={`${todayRevenue.toLocaleString()} AED`} icon={TrendingUp} color="text-emerald-500" />
           <div className="w-px h-8 bg-border hidden md:block" />
-          <TopBarMetric label="Field Force" value={`${activeReps} Active`} icon={Users} color="text-blue-500" />
+          <TopBarMetric label="Field Force" value="8/10 Active" icon={Users} color="text-blue-500" />
           <div className="w-px h-8 bg-border hidden lg:block" />
           <TopBarMetric label="Pending Sync" value={pendingApps.toString()} icon={Clock} color="text-purple-500" />
           <div className="w-px h-8 bg-border hidden lg:block" />

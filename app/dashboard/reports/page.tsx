@@ -485,15 +485,6 @@ export default function ReportsPage() {
                                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
                                       <FileText size={14} /> Executive Summary
                                     </div>
-                                    <button 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        window.print();
-                                      }}
-                                      className="px-4 py-2 bg-rose-500/10 text-rose-600 border border-rose-500/20 rounded-xl flex items-center gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/20 transition-all shadow-sm"
-                                    >
-                                      <FilePdf size={14} /> Detailed PDF
-                                    </button>
                                   </div>
                                   <p className="text-sm font-medium text-muted-foreground italic leading-relaxed">
                                     "{row.deepDetail.summary}"

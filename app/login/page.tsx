@@ -83,7 +83,7 @@ export default function LoginPage() {
               alt="RX Logo"
               width={110}
               height={48}
-              className="object-contain brightness-200"
+              className="object-contain"
             />
           </motion.div>
 

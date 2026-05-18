@@ -387,7 +387,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     const storedSales = localStorage.getItem("rx_sales_v5");
     const storedAppointments = localStorage.getItem("rx_appointments_v7");
     const storedExpenses = localStorage.getItem("rx_expenses_v5");
-    const storedGiftMeetups = localStorage.getItem("rx_gift_meetups_v1");
+    const storedGiftMeetups = localStorage.getItem("rx_gift_meetups_v2");
 
     if (storedReps) {
       const parsed = JSON.parse(storedReps);
@@ -449,7 +449,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     else setAppointments([...STAFF_MEETINGS]);
     
     if (storedExpenses) {
-      setGiftMeetups(JSON.parse(storedGiftMeetups || "[]"));
       setExpenses(JSON.parse(storedExpenses));
     } else {
       setExpenses([
@@ -461,11 +460,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         { id: "exp-6", staffId: "u3", staffName: "Abdulla bin Rashid", type: "other", amount: 150, date: "2026-05-12", description: "Clinical brochure printing costs", status: "pending" },
         { id: "exp-7", staffId: "u6", staffName: "Omar Al Mansoori", type: "travel", amount: 310, date: "2026-05-13", description: "Inter-city travel (Dubai to Abu Dhabi)", status: "pending" },
       ]);
-      
+    }
+
+    if (storedGiftMeetups) {
+      setGiftMeetups(JSON.parse(storedGiftMeetups));
+    } else {
       setGiftMeetups([
         { id: "gm-1", staffName: "Muna Al Falasi", type: "gift", item: "Anatomy Reference Guide", hospitalName: "Bur Dubai Hospital", doctorName: "Dr. Ahmed Mahmoud", quantity: 2, cost: 450, date: "2026-05-10", status: "approved" },
         { id: "gm-2", staffName: "Abdulla bin Rashid", type: "meetup", item: "Clinical Detailing Lunch", hospitalName: "City Heart Hospital", doctorName: "Dr. Ravi Nair", quantity: 5, cost: 350, date: "2026-05-12", status: "approved" },
         { id: "gm-3", staffName: "Faisal Al Marzouqi", type: "gift", item: "Branded Prescription Pads", hospitalName: "Jumeirah Family Clinic", doctorName: "Dr. John Smith", quantity: 50, cost: 100, date: "2026-05-14", status: "pending_approval" },
+        { id: "gm-4", staffName: "Ayesha Al Suwaidi", type: "meetup", item: "Endocrinology Seminar Coffee", hospitalName: "Sharjah Medical Center", doctorName: "Dr. Fatima Al Mazrouei", quantity: 8, cost: 220, date: "2026-05-15", status: "approved" },
+        { id: "gm-5", staffName: "Saeed Al Tayer", type: "gift", item: "Premium Stethoscope Set", hospitalName: "Marina Specialised Clinic", doctorName: "Dr. Khalifa Al Suwaidi", quantity: 1, cost: 850, date: "2026-05-16", status: "pending_approval" },
+        { id: "gm-6", staffName: "Omar Al Mansoori", type: "meetup", item: "Orthopedics Symposium Dinner", hospitalName: "Al Mankhool Medical Centre", doctorName: "Dr. Ahmed Al Hammadi", quantity: 4, cost: 680, date: "2026-05-17", status: "pending_approval" },
+        { id: "gm-7", staffName: "Faisal Al Marzouqi", type: "meetup", item: "Cardiology Unit Tea & Donuts", hospitalName: "City Heart Hospital", doctorName: "Dr. Sarah Al Hashmi", quantity: 12, cost: 180, date: "2026-05-18", status: "approved" },
+        { id: "gm-8", staffName: "Muna Al Falasi", type: "gift", item: "Ophthalmology Penlights", hospitalName: "Green Valley Clinic", doctorName: "Dr. Sultan Al Qasimi", quantity: 20, cost: 300, date: "2026-05-18", status: "pending_approval" },
       ]);
     }
 
@@ -482,7 +490,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("rx_sales_v5", JSON.stringify(sales));
       localStorage.setItem("rx_appointments_v7", JSON.stringify(appointments));
       localStorage.setItem("rx_expenses_v5", JSON.stringify(expenses));
-      localStorage.setItem("rx_gift_meetups_v1", JSON.stringify(giftMeetups));
+      localStorage.setItem("rx_gift_meetups_v2", JSON.stringify(giftMeetups));
     }
   }, [hospitals, doctors, patients, reps, medicines, sales, appointments, expenses, giftMeetups, isLoading]);
 

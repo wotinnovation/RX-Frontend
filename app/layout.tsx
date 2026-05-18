@@ -14,6 +14,9 @@ const ubuntu = Ubuntu({
 export const metadata: Metadata = {
   title: "RxSales - Medical Sales Dashboard",
   description: "Advanced pharmaceutical sales management platform",
+  icons: {
+    icon: "/images/favicon/rx-favicon.png",
+  },
 };
 
 export default function RootLayout({
