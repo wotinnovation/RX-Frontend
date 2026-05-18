@@ -272,6 +272,8 @@ export function ManagerDashboard() {
             <ActivityItem color="bg-emerald-500" title="Faisal Al Marzouqi completed visit at Mediclinic Dubai Mall - order 8,400 AED" time="Just now · Downtown · 3 doctors detailed" onClick={() => {}} />
             <ActivityItem color="bg-red-500" title="Abdulla bin Rashid logged remark: 'Dr. Sultan will trial new antibiotic line'" time="4 min ago · Al Zahra Hospital Dubai" tag="positive" onClick={() => {}} />
             <ActivityItem color="bg-blue-500" title="Saeed Al Tayer checked in at Emirates Specialty Hospital" time="12 min ago · Healthcare City · 2nd visit" onClick={() => {}} />
+            <ActivityItem color="bg-purple-500" title="Mariam Al Hashimi requested clinical trial collateral for King's College Hospital" time="25 min ago · Dubai Hills · Pediatric Unit" onClick={() => {}} />
+            <ActivityItem color="bg-amber-500" title="Zayed Al Mansoori registered new liaison profile: Dr. Amina Al Mheiri" time="45 min ago · Abu Dhabi Medical City · Endocrinology Specialist" tag="new profile" onClick={() => {}} />
           </div>
         </div>
 
