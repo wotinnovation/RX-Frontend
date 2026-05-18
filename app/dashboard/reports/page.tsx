@@ -51,6 +51,14 @@ export default function ReportsPage() {
   const [selectedType, setSelectedType] = useState<ReportType>("doctor");
   const [selectedEntityId, setSelectedEntityId] = useState<string>("all");
   const [dateRange, setDateRange] = useState("this_month");
+  const [customStartDate, setCustomStartDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split("T")[0];
+  });
+  const [customEndDate, setCustomEndDate] = useState(() => {
+    return new Date().toISOString().split("T")[0];
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [activeDetailRow, setActiveDetailRow] = useState<string | null>(null);
@@ -127,6 +135,38 @@ export default function ReportsPage() {
 
   // Deep Data Preview Extraction
   const previewData = useMemo(() => {
+    const dateFilter = (itemDateStr: string) => {
+      if (!itemDateStr) return true;
+      const itemDate = new Date(itemDateStr);
+      const now = new Date();
+      
+      if (dateRange === "today") {
+        return itemDateStr.split('T')[0] === now.toISOString().split('T')[0];
+      }
+      if (dateRange === "week") {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(now.getDate() - 7);
+        return itemDate >= oneWeekAgo && itemDate <= now;
+      }
+      if (dateRange === "month" || dateRange === "this_month") {
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(now.getMonth() - 1);
+        return itemDate >= oneMonthAgo && itemDate <= now;
+      }
+      if (dateRange === "quarter") {
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(now.getMonth() - 3);
+        return itemDate >= threeMonthsAgo && itemDate <= now;
+      }
+      if (dateRange === "custom") {
+        const start = new Date(customStartDate);
+        const end = new Date(customEndDate);
+        end.setHours(23, 59, 59, 999);
+        return itemDate >= start && itemDate <= end;
+      }
+      return true;
+    };
+
     switch (selectedType) {
       case "doctor":
         const filteredDoctors = selectedEntityId === "all" ? doctors : doctors.filter(d => d.id === selectedEntityId);
@@ -134,8 +174,8 @@ export default function ReportsPage() {
           const hosp = hospitals.find(h => h.id === d.hospitalId);
           const assignedRep = reps.find(r => r.id === hosp?.assignedRepId);
           const doctorPatients = patients.filter(p => p.assignedDoctorId === d.id);
-          const doctorSales = sales.filter(s => s.doctorId === d.id);
-          const doctorAppointments = appointments.filter(a => a.doctorName === d.name && a.status === "completed").sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          const doctorSales = sales.filter(s => s.doctorId === d.id && dateFilter(s.date));
+          const doctorAppointments = appointments.filter(a => a.doctorName === d.name && a.status === "completed" && dateFilter(a.date)).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           
           return {
             id: d.id,
@@ -167,9 +207,9 @@ export default function ReportsPage() {
         return filteredHospitals.map(h => {
           const hospitalDocs = doctors.filter(d => d.hospitalId === h.id);
           const hospitalPatients = patients.filter(p => p.hospitalId === h.id);
-          const hospitalSales = sales.filter(s => s.hospitalId === h.id);
+          const hospitalSales = sales.filter(s => s.hospitalId === h.id && dateFilter(s.date));
           const hospitalStaff = reps.find(r => r.id === h.assignedRepId);
-          const lastVisit = appointments.filter(a => a.hospitalName === h.name && a.status === "completed").sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+          const lastVisit = appointments.filter(a => a.hospitalName === h.name && a.status === "completed" && dateFilter(a.date)).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
           
           const provisionSummary = hospitalSales.reduce((acc: any, s: any) => {
             const medName = medicines.find(m => m.id === s.medicineId)?.name || "Unknown SKU";
@@ -213,7 +253,8 @@ export default function ReportsPage() {
         });
 
       case "sales":
-        const filteredSales = selectedEntityId === "all" ? sales : sales.filter(s => hospitals.find(h => h.id === s.hospitalId)?.area?.toLowerCase().includes(selectedEntityId.toLowerCase()));
+        const zoneFiltered = selectedEntityId === "all" ? sales : sales.filter(s => hospitals.find(h => h.id === s.hospitalId)?.area?.toLowerCase().includes(selectedEntityId.toLowerCase()));
+        const filteredSales = zoneFiltered.filter(s => dateFilter(s.date));
         return filteredSales.slice(0, 15).map(s => ({
           id: s.id,
           primary: hospitals.find(h => h.id === s.hospitalId)?.name || "Unknown",
@@ -251,7 +292,7 @@ export default function ReportsPage() {
       default:
         return [];
     }
-  }, [selectedType, selectedEntityId, sales, medicines, hospitals, doctors, patients, reps, appointments]);
+  }, [selectedType, selectedEntityId, sales, medicines, hospitals, doctors, patients, reps, appointments, dateRange, customStartDate, customEndDate]);
 
   return (
     <div className="space-y-10 pb-20">
@@ -385,7 +426,48 @@ export default function ReportsPage() {
                       {range}
                     </button>
                   ))}
+                  <button
+                    onClick={() => setDateRange("custom")}
+                    className={cn(
+                      "col-span-2 px-4 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all flex items-center justify-center gap-2",
+                      dateRange === "custom" ? "bg-primary text-white border-primary shadow-lg" : "bg-secondary/30 text-muted-foreground border-border hover:bg-secondary"
+                    )}
+                  >
+                    <Calendar size={12} /> Custom Range
+                  </button>
                 </div>
+
+                <AnimatePresence>
+                  {dateRange === "custom" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="space-y-4 pt-4 overflow-hidden"
+                    >
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Start Date</label>
+                          <input
+                            type="date"
+                            value={customStartDate}
+                            onChange={(e) => setCustomStartDate(e.target.value)}
+                            className="w-full px-4 py-3 bg-secondary/50 border border-border rounded-xl text-[10px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">End Date</label>
+                          <input
+                            type="date"
+                            value={customEndDate}
+                            onChange={(e) => setCustomEndDate(e.target.value)}
+                            className="w-full px-4 py-3 bg-secondary/50 border border-border rounded-xl text-[10px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
