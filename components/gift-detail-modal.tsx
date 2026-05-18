@@ -16,6 +16,8 @@ interface GiftDetailModalProps {
 export function GiftDetailModal({ item, onClose, onApprove, onReject }: GiftDetailModalProps) {
   const [comment, setComment] = React.useState("");
   const [error, setError] = React.useState("");
+  const [complianceStatus, setComplianceStatus] = React.useState("compliant");
+  const [authCode, setAuthCode] = React.useState("");
   React.useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -128,21 +130,58 @@ export function GiftDetailModal({ item, onClose, onApprove, onReject }: GiftDeta
           )}
 
           {item.status === 'pending_approval' && (
-            <div className="p-6 bg-secondary/30 rounded-[10px] border border-border">
-              <p className="text-[10px] font-black uppercase tracking-widest mb-3 text-primary">Managerial Review Comment</p>
-              <textarea 
-                value={comment}
-                onChange={(e) => {
-                  setComment(e.target.value);
-                  if (e.target.value) setError("");
-                }}
-                placeholder="Required for rejection, optional for approval..."
-                className={cn(
-                  "w-full bg-white dark:bg-black/20 border rounded-[10px] p-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all min-h-[80px] resize-none",
-                  error ? "border-rose-500" : "border-border"
-                )}
-              />
-              {error && <p className="text-[10px] font-bold text-rose-500 mt-2 uppercase tracking-widest">{error}</p>}
+            <div className="p-6 bg-secondary/30 rounded-[10px] border border-border space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary">Compliance Audit & Authorization Console</p>
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground ml-1">Compliance Check</label>
+                  <select 
+                    value={complianceStatus}
+                    onChange={(e) => setComplianceStatus(e.target.value)}
+                    className="w-full bg-white dark:bg-slate-900 border border-border rounded-lg px-3 py-2 text-xs font-bold focus:outline-none cursor-pointer"
+                  >
+                    <option value="compliant">Compliant with Policy</option>
+                    <option value="exception">Policy Exception Granted</option>
+                    <option value="needs_review">Requires Board Review</option>
+                  </select>
+                </div>
+                
+                <div className="space-y-1">
+                  <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground ml-1">Digital Authorization Code</label>
+                  <input 
+                    type="password"
+                    value={authCode}
+                    onChange={(e) => {
+                      setAuthCode(e.target.value);
+                      if (e.target.value) setError("");
+                    }}
+                    placeholder="Enter Authorization Code..."
+                    className="w-full bg-white dark:bg-slate-900 border border-border rounded-lg px-3 py-2 text-xs font-bold focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[8px] font-black uppercase tracking-widest text-muted-foreground ml-1">Liaison Audit Comments</label>
+                <textarea 
+                  value={comment}
+                  onChange={(e) => {
+                    setComment(e.target.value);
+                    if (e.target.value) setError("");
+                  }}
+                  placeholder="Enter audit review comments, required for exception/rejection..."
+                  className={cn(
+                    "w-full bg-white dark:bg-slate-900 border rounded-lg p-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all min-h-[60px] resize-none",
+                    error ? "border-rose-500" : "border-border"
+                  )}
+                />
+              </div>
+              
+              {error && <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest ml-1">{error}</p>}
             </div>
           )}
         </div>
@@ -155,10 +194,14 @@ export function GiftDetailModal({ item, onClose, onApprove, onReject }: GiftDeta
                 type="button" 
                 onClick={() => { 
                   if (!comment.trim()) {
-                    setError("REJECTION REQUIRES A COMMENT");
+                    setError("REJECTION REQUIRES AUDIT COMMENTS");
                     return;
                   }
-                  onReject(item.id, comment); 
+                  if (!authCode.trim()) {
+                    setError("DIGITAL AUTHORIZATION CODE REQUIRED");
+                    return;
+                  }
+                  onReject(item.id, `[Compliance: REJECTED] Code: ${authCode.substring(0, 2)}** | ${comment}`); 
                   onClose(); 
                 }} 
                 className="px-8 py-4 bg-rose-500/10 text-rose-600 font-black text-[10px] uppercase rounded-[10px] hover:bg-rose-500/20 transition-all flex items-center gap-2"
@@ -167,7 +210,14 @@ export function GiftDetailModal({ item, onClose, onApprove, onReject }: GiftDeta
               </button>
               <button 
                 type="button" 
-                onClick={() => { onApprove(item.id, comment); onClose(); }} 
+                onClick={() => { 
+                  if (!authCode.trim()) {
+                    setError("DIGITAL AUTHORIZATION CODE REQUIRED");
+                    return;
+                  }
+                  onApprove(item.id, `[Compliance: ${complianceStatus.toUpperCase()}] Code: ${authCode.substring(0, 2)}** | ${comment || "Approved compliant"}`); 
+                  onClose(); 
+                }} 
                 className="px-10 py-4 bg-emerald-500 text-white font-black text-[10px] uppercase rounded-[10px] shadow-xl shadow-emerald-500/20 hover:scale-[1.02] transition-all flex items-center gap-2"
               >
                 <CheckCircle2 size={14} /> Approve Now
