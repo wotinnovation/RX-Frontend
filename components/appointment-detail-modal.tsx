@@ -180,15 +180,15 @@ export function AppointmentDetailModal({ meeting, role, onClose, onLogVisit }: A
         exit={{ scale: 0.9, opacity: 0, y: 20 }} 
         className="relative bg-card border border-border w-full max-w-2xl rounded-[10px] shadow-2xl overflow-hidden pointer-events-auto"
       >
-        <div className="p-10 bg-primary text-primary-foreground relative overflow-hidden">
+        <div className="px-10 py-6 bg-primary text-primary-foreground relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent)]" />
-          <button type="button" onClick={onClose} className="absolute top-8 right-8 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 z-50 transition-colors"><X size={20} /></button>
+          <button type="button" onClick={onClose} className="absolute top-1/2 -translate-y-1/2 right-8 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 z-50 transition-colors"><X size={20} /></button>
           <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-2">Audit Hub</p>
-            <h3 className="text-3xl font-black tracking-tighter">{meeting.title}</h3>
-            <div className="flex items-center gap-4 mt-4">
-               <div className="flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-[9px] font-black uppercase"><Clock size={12} /> {meeting.hour}</div>
-               <div className="flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-[9px] font-black uppercase tracking-widest">{meeting.status}</div>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-1">Audit Hub</p>
+            <h3 className="text-2xl font-black tracking-tighter pr-12">{meeting.title}</h3>
+            <div className="flex items-center gap-4 mt-2">
+               <div className="flex items-center gap-2 px-3 py-0.5 bg-white/20 rounded-full text-[9px] font-black uppercase"><Clock size={12} /> {meeting.hour}</div>
+               <div className="flex items-center gap-2 px-3 py-0.5 bg-white/20 rounded-full text-[9px] font-black uppercase tracking-widest">{meeting.status}</div>
             </div>
           </div>
         </div>

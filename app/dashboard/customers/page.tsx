@@ -106,6 +106,41 @@ export default function CustomerAssignmentPage() {
       </AnimatePresence>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Territory Summary */}
+        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-8 bg-card border border-border rounded-[2.5rem] card-shadow flex items-center gap-6">
+            <div className="w-16 h-16 bg-blue-500 rounded-3xl flex items-center justify-center text-white shadow-lg">
+              <Building2 size={32} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">Total Coverage</p>
+              <p className="text-3xl font-black">{hospitals.length}</p>
+              <p className="text-xs font-bold text-emerald-600 mt-1">100% Facilities Audited</p>
+            </div>
+          </div>
+          
+          <div className="p-8 bg-card border border-border rounded-[2.5rem] card-shadow flex items-center gap-6">
+            <div className="w-16 h-16 bg-primary rounded-3xl flex items-center justify-center text-white shadow-lg">
+              <UserCheck size={32} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">Rep Allocation</p>
+              <p className="text-3xl font-black">{hospitals.filter(h => h.assignedRepId).length}</p>
+              <p className="text-xs font-bold text-amber-600 mt-1">{hospitals.filter(h => !h.assignedRepId).length} Pending Assignment</p>
+            </div>
+          </div>
+
+          <div className="p-8 bg-primary text-white rounded-[2.5rem] shadow-xl shadow-primary/20 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+            <TrendingUp size={60} className="absolute bottom-[-10px] right-[-10px] opacity-20 group-hover:scale-110 transition-transform" />
+            <div className="relative z-10">
+              <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Market Efficiency</p>
+              <p className="text-3xl font-black">94.2%</p>
+              <p className="text-xs font-bold opacity-90 mt-1">Optimal Route Compliance</p>
+            </div>
+          </div>
+        </div>
+
         {/* Assignment Console */}
         <div className="lg:col-span-3">
           <div className="bg-card border border-border rounded-[2.5rem] overflow-hidden card-shadow">
@@ -209,41 +244,6 @@ export default function CustomerAssignmentPage() {
                 })}
               </tbody>
             </table>
-          </div>
-        </div>
-
-        {/* Territory Summary */}
-        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 bg-card border border-border rounded-[2.5rem] card-shadow flex items-center gap-6">
-            <div className="w-16 h-16 bg-blue-500 rounded-3xl flex items-center justify-center text-white shadow-lg">
-              <Building2 size={32} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">Total Coverage</p>
-              <p className="text-3xl font-black">{hospitals.length}</p>
-              <p className="text-xs font-bold text-emerald-600 mt-1">100% Facilities Audited</p>
-            </div>
-          </div>
-          
-          <div className="p-8 bg-card border border-border rounded-[2.5rem] card-shadow flex items-center gap-6">
-            <div className="w-16 h-16 bg-primary rounded-3xl flex items-center justify-center text-white shadow-lg">
-              <UserCheck size={32} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">Rep Allocation</p>
-              <p className="text-3xl font-black">{hospitals.filter(h => h.assignedRepId).length}</p>
-              <p className="text-xs font-bold text-amber-600 mt-1">{hospitals.filter(h => !h.assignedRepId).length} Pending Assignment</p>
-            </div>
-          </div>
-
-          <div className="p-8 bg-primary text-white rounded-[2.5rem] shadow-xl shadow-primary/20 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-            <TrendingUp size={60} className="absolute bottom-[-10px] right-[-10px] opacity-20 group-hover:scale-110 transition-transform" />
-            <div className="relative z-10">
-              <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Market Efficiency</p>
-              <p className="text-3xl font-black">94.2%</p>
-              <p className="text-xs font-bold opacity-90 mt-1">Optimal Route Compliance</p>
-            </div>
           </div>
         </div>
       </div>

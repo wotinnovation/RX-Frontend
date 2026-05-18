@@ -232,7 +232,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         for (let d = 1; d <= docCount; d++) {
           const doc = {
             id: `d-${hospitalId}-${d}`,
-            name: `Dr. ${doctorNames[Math.floor(Math.random() * doctorNames.length)]}`,
+            name: `${doctorNames[Math.floor(Math.random() * doctorNames.length)]}`,
             hospitalId: hospitalId,
             specialty: specialties[Math.floor(Math.random() * specialties.length)]
           };
@@ -286,7 +286,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       // Add one lead doctor for each to ensure table looks full
       doctorList.push({
         id: `d-${hId}-1`,
-        name: `Dr. ${doctorNames[idx % doctorNames.length]}`,
+        name: `${doctorNames[idx % doctorNames.length]}`,
         hospitalId: hId,
         specialty: "General Medicine"
       });
@@ -383,15 +383,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const storedHospitals = localStorage.getItem("rx_hospitals_v5");
-    const storedDoctors = localStorage.getItem("rx_doctors_v5");
-    const storedPatients = localStorage.getItem("rx_patients_v5");
+    const storedHospitals = localStorage.getItem("rx_hospitals_v6");
+    const storedDoctors = localStorage.getItem("rx_doctors_v6");
+    const storedPatients = localStorage.getItem("rx_patients_v6");
     const storedReps = localStorage.getItem("rx_reps_v4");
-    const storedMedicines = localStorage.getItem("rx_medicines_v5");
-    const storedSales = localStorage.getItem("rx_sales_v5");
-    const storedAppointments = localStorage.getItem("rx_appointments_v7");
+    const storedMedicines = localStorage.getItem("rx_medicines_v6");
+    const storedSales = localStorage.getItem("rx_sales_v6");
+    const storedAppointments = localStorage.getItem("rx_appointments_v8");
     const storedExpenses = localStorage.getItem("rx_expenses_v5");
-    const storedGiftMeetups = localStorage.getItem("rx_gift_meetups_v2");
+    const storedGiftMeetups = localStorage.getItem("rx_gift_meetups_v3");
 
     if (storedReps) {
       const parsed = JSON.parse(storedReps);
@@ -486,15 +486,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isLoading) {
-      localStorage.setItem("rx_hospitals_v5", JSON.stringify(hospitals));
-      localStorage.setItem("rx_doctors_v5", JSON.stringify(doctors));
-      localStorage.setItem("rx_patients_v5", JSON.stringify(patients));
+      localStorage.setItem("rx_hospitals_v6", JSON.stringify(hospitals));
+      localStorage.setItem("rx_doctors_v6", JSON.stringify(doctors));
+      localStorage.setItem("rx_patients_v6", JSON.stringify(patients));
       localStorage.setItem("rx_reps_v4", JSON.stringify(reps));
-      localStorage.setItem("rx_medicines_v5", JSON.stringify(medicines));
-      localStorage.setItem("rx_sales_v5", JSON.stringify(sales));
-      localStorage.setItem("rx_appointments_v7", JSON.stringify(appointments));
+      localStorage.setItem("rx_medicines_v6", JSON.stringify(medicines));
+      localStorage.setItem("rx_sales_v6", JSON.stringify(sales));
+      localStorage.setItem("rx_appointments_v8", JSON.stringify(appointments));
       localStorage.setItem("rx_expenses_v5", JSON.stringify(expenses));
-      localStorage.setItem("rx_gift_meetups_v2", JSON.stringify(giftMeetups));
+      localStorage.setItem("rx_gift_meetups_v3", JSON.stringify(giftMeetups));
     }
   }, [hospitals, doctors, patients, reps, medicines, sales, appointments, expenses, giftMeetups, isLoading]);
 

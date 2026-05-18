@@ -42,24 +42,24 @@ export function GiftDetailModal({ item, onClose, onApprove, onReject }: GiftDeta
         className="relative bg-card border border-border w-full max-w-xl rounded-[10px] shadow-2xl overflow-hidden pointer-events-auto"
       >
         <div className={cn(
-          "p-10 text-white relative overflow-hidden",
+          "px-10 py-6 text-white relative overflow-hidden",
           item.type === 'gift' ? "bg-primary" : "bg-blue-600"
         )}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent)]" />
-          <button type="button" onClick={onClose} className="absolute top-8 right-8 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 z-50 transition-colors"><X size={20} /></button>
+          <button type="button" onClick={onClose} className="absolute top-1/2 -translate-y-1/2 right-8 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 z-50 transition-colors"><X size={20} /></button>
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-2 opacity-70">
+            <div className="flex items-center gap-2 mb-1 opacity-70">
               {item.type === 'gift' ? <Gift size={14} /> : <Coffee size={14} />}
               <p className="text-[10px] font-black uppercase tracking-[0.4em]">
                 {item.type === 'gift' ? "Promotional Gift" : "Professional Meetup"}
               </p>
             </div>
-            <h3 className="text-3xl font-black tracking-tighter">{item.item}</h3>
-            <div className="mt-4 flex items-center gap-2">
-               <span className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest">
+            <h3 className="text-2xl font-black tracking-tighter pr-12">{item.item}</h3>
+            <div className="mt-2 flex items-center gap-2">
+               <span className="px-3 py-0.5 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest">
                  {item.status.replace('_', ' ')}
                </span>
-               <span className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-black tabular-nums">
+               <span className="px-3 py-0.5 bg-white/20 rounded-full text-[10px] font-black tabular-nums">
                  AED {item.cost?.toLocaleString()}
                </span>
             </div>

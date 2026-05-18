@@ -104,12 +104,12 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
   }, [selectedHospitalId, sales, rep.id]);
 
   const medicineBreakdown = useMemo(() => {
-    const breakdown: Record<string, { name: string, amount: number, qty: number, category: string }> = {};
+    const breakdown: Record<string, { id: string, name: string, amount: number, qty: number, category: string }> = {};
     hospitalSales.forEach(s => {
       const med = medicines.find(m => m.id === s.medicineId);
       if (med) {
         if (!breakdown[s.medicineId]) {
-          breakdown[s.medicineId] = { name: med.name, amount: 0, qty: 0, category: med.category };
+          breakdown[s.medicineId] = { id: med.id, name: med.name, amount: 0, qty: 0, category: med.category };
         }
         breakdown[s.medicineId].amount += s.amount;
         breakdown[s.medicineId].qty += s.quantity;
@@ -119,12 +119,12 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
   }, [hospitalSales, medicines]);
 
   const doctorBreakdown = useMemo(() => {
-    const breakdown: Record<string, { name: string, amount: number, visits: number, specialty: string }> = {};
+    const breakdown: Record<string, { id: string, name: string, amount: number, visits: number, specialty: string }> = {};
     hospitalSales.forEach(s => {
       const doc = doctors.find(d => d.id === s.doctorId);
       if (doc) {
         if (!breakdown[s.doctorId]) {
-          breakdown[s.doctorId] = { name: doc.name, amount: 0, visits: 0, specialty: doc.specialty };
+          breakdown[s.doctorId] = { id: doc.id, name: doc.name, amount: 0, visits: 0, specialty: doc.specialty };
         }
         breakdown[s.doctorId].amount += s.amount;
         breakdown[s.doctorId].visits += 1;
@@ -810,7 +810,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
                               </thead>
                               <tbody className="divide-y divide-border">
                                 {medicineBreakdown.map((item) => (
-                                  <tr key={item.name} className="hover:bg-secondary/5 transition-colors">
+                                  <tr key={item.id} className="hover:bg-secondary/5 transition-colors">
                                     <td className="px-6 py-4">
                                       <p className="text-xs font-bold">{item.name}</p>
                                       <p className="text-[8px] font-black uppercase text-muted-foreground tracking-tighter">{item.category}</p>
@@ -844,7 +844,7 @@ export function RepDetailedPerformance({ rep, onBack }: { rep: SalesRep, onBack:
                               </thead>
                               <tbody className="divide-y divide-border">
                                 {doctorBreakdown.map((item) => (
-                                  <tr key={item.name} className="hover:bg-secondary/5 transition-colors">
+                                  <tr key={item.id} className="hover:bg-secondary/5 transition-colors">
                                     <td className="px-6 py-4">
                                       <p className="text-xs font-bold">{item.name}</p>
                                       <p className="text-[8px] font-black uppercase text-muted-foreground tracking-tighter">{item.specialty}</p>
